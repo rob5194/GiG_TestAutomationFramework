@@ -45,7 +45,7 @@ namespace TestAutomationFramework.Helpers
                         return default(T);
                 }
             }
-            catch (Exception ex)
+            catch 
             {
                 return default(T);
             }
