@@ -24,7 +24,7 @@ namespace TestAutomationFramework.Helpers
         public Dictionary<string, object> CreateConfig(string prodOrCons)
         {
 
-            using (StreamReader r = new StreamReader("C:\\Users\\Home\\Desktop\\GiGLatest - Copy\\TestAutomationFramework\\TestAutomationFramework\\config.json"))
+            using (StreamReader r = new StreamReader("..\\..\\..\\config.json"))
             {
                 string json = r.ReadToEnd().Replace('.', '_');
                 jsonData = JsonConvert.DeserializeObject<jsonClass>(json);
@@ -37,7 +37,7 @@ namespace TestAutomationFramework.Helpers
                     // Create the producer configuration
                     config = new Dictionary<string, object>
                     {
-                                { "bootstrap.servers", "127.0.0.1:9092" },//jsonData.bootstrap_servers },
+                                { "bootstrap.servers", jsonData.bootstrap_servers.Replace('_','.' )} ////127.0.0.1:9092 },
                     };
 
                     return config;
@@ -46,10 +46,10 @@ namespace TestAutomationFramework.Helpers
                     // Create the producer configuration
                     config = new Dictionary<string, object>
                     {
-                                { "group.id", "myconsumer" },//jsonData.group_id },
-                                { "bootstrap.servers", "127.0.0.1:9092" },//jsonData.bootstrap_servers },
+                                { "group.id", jsonData.group_id },// "myconsumer" },//jsonData.group_id },
+                                { "bootstrap.servers", jsonData.bootstrap_servers.Replace('_','.' ) }, //"127.0.0.1:9092" },//jsonData.bootstrap_servers },
                                 { "enable.auto.commit", true },
-                                { "auto.offset.reset", "earliest" }// }jsonData.auto_offset_reset }
+                                { "auto.offset.reset", jsonData.auto_offset_reset }//"earliest" }// }jsonData.auto_offset_reset }
                     };
                     return config;
             }
@@ -82,34 +82,40 @@ namespace TestAutomationFramework.Helpers
         public List<string> CreateConsumer(Dictionary<string, object> consumerConfig)
         {
             List<string> producedMessages = new List<string>();
+            Stopwatch s = new Stopwatch();
+            s.Start();
             using (var consumer = new Consumer<Null, string>(consumerConfig, null, new StringDeserializer(Encoding.UTF8)))
             {
-                // Subscribe to the Kafka topic
-                consumer.Subscribe(new List<string>() { jsonData.topic });
-
-                // Subscribe to the OnMessage event
-                consumer.OnMessage += (obj, msg) =>
+                try
                 {
-                    producedMessages.Add(msg.Value.ToUpper());
-                    
-                };
+                    // Subscribe to the Kafka topic
+                    consumer.Subscribe(new List<string>() { jsonData.topic });
+                    // Subscribe to the OnMessage event
+                    consumer.OnMessage += (obj, msg) =>
+                    {
+                        producedMessages.Add(msg.Value.ToUpper());
 
-                while (producedMessages.Count < counter)
-                {
-                    consumer.Poll(100);
-                    
+                    };
+
+                    // Poll for messages
+                    while (producedMessages.Count < counter)
+                    {
+                        consumer.Poll(100);
+
+                    }
+
+                    //consumer.Dispose();
+                    return producedMessages.Distinct().ToList();
                 }
 
+                catch (Exception ex)
+                {
+                    return null;
+                }
 
-                //consumer.Dispose();
-                return producedMessages.Distinct().ToList();
-                // Poll for messages
-                //while (!cancelled)
-                //{
-                //    consumer.Poll();
-                //}
-            }           //}
+            }           
         }
+
     }
 }
 
