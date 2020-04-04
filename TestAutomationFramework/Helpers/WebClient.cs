@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -33,7 +34,7 @@ namespace TestAutomationFramework.Helpers
                         var streamReader = new StreamReader(await response.Content.ReadAsStreamAsync());
                         var responseContent = streamReader.ReadToEnd().Trim();
                         var jsonObject = JsonConvert.DeserializeObject<T>(responseContent);
-                        var check = new ResponseModel { statusCode = (int)response.StatusCode, value = jsonObject };
+                        var check = new CommonResponseModel { StatusCode = (int)response.StatusCode, Value = jsonObject };
                         return check;
                     }
                 }
@@ -44,7 +45,7 @@ namespace TestAutomationFramework.Helpers
             }
         }
 
-        public async Task<object> PostAsyncHelper<T>(string requestUrl, object model) where T : class
+        public async Task<T> PostAsyncHelper<T>(string requestUrl, object model) where T : class
         {
 
             try
@@ -57,43 +58,38 @@ namespace TestAutomationFramework.Helpers
 
                     using (HttpResponseMessage response = await client.PostAsync(requestUrl, serialized))
                     {
-                        response.EnsureSuccessStatusCode();
-                        var streamReader = new StreamReader(await response.Content.ReadAsStreamAsync());
-                        var responseContent = streamReader.ReadToEnd().Trim();
-                        var jsonObject = JsonConvert.DeserializeObject<T>(responseContent);
-                        ResponseModel check = new ResponseModel { statusCode = (int)response.StatusCode, value = jsonObject};
-                        return check;
-
+                        if (response.IsSuccessStatusCode)
+                        {
+                            var streamReader = new StreamReader(await response.Content.ReadAsStreamAsync());
+                            var responseContent = streamReader.ReadToEnd().Trim();
+                            JObject j = JsonConvert.DeserializeObject<JObject>(responseContent);
+                            var parsedata = new CommonResponseModel { Id = int.Parse(j["id"].ToString()), StatusCode = (int)response.StatusCode, Token = j["token"].ToString() };
+                            return (T)Convert.ChangeType(parsedata, typeof(T));
+                        }
+                        else
+                        {
+                            var streamReader = new StreamReader(await response.Content.ReadAsStreamAsync());
+                            var responseContent = streamReader.ReadToEnd().Trim();
+                            JObject j = JsonConvert.DeserializeObject<JObject>(responseContent);
+                            var parsedata = new CommonResponseModel { Id = int.Parse(j["id"].ToString()), StatusCode = (int)response.StatusCode, Token = j["token"].ToString() };
+                            return (T)Convert.ChangeType(parsedata, typeof(T));
+                        }
                     }
                 }
-                //return default(T);
             }
-            catch
+            catch (Exception ex)
             {
-                return default(T);
+                var message = ex.Message;
+                return default;
             }
 
-        }
-
-        public string RequestParameters(string jsonString)
-        {
-            IDictionary<string, string> jsonInputCSharp = JsonConvert.DeserializeObject<IDictionary<string, string>>(jsonString);
-            List<string> stringValues = new List<string>();
-            foreach (var item in jsonInputCSharp)
-            {
-                if (!string.IsNullOrWhiteSpace(item.Value))
-                {
-                    stringValues.Add(item.Key + "=" + item.Value);
-                }
-            }
-            return string.Format("?{0}", string.Join("&", stringValues));
         }
 
         public T ReadJsonFile<T>(string fileName)
         {
             using (StreamReader r = new StreamReader(fileName))
             {
-                string json = r.ReadToEnd();//.Replace('.', '_');
+                string json = r.ReadToEnd().Trim();//.Replace('.', '_');
                 return JsonConvert.DeserializeObject<T>(json);
             }
         }

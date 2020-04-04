@@ -11,7 +11,7 @@ namespace TestAutomationFramework.StepDefinitions
     {
 
         WebClient client = new WebClient();
-        ResponseModel responseModel = null;
+        CommonResponseModel responseModel = null;
         RequestModel requestModel = null;
         string requestType, requestUrl, jsonString = "";
 
@@ -36,11 +36,10 @@ namespace TestAutomationFramework.StepDefinitions
             switch (requestType.ToUpper())
             {
                 case "POST":
-                    //requestUrl += client.RequestParameters(jsonString);
-                    responseModel = await client.PostAsyncHelper<ResponseModel>(requestUrl, requestModel) as ResponseModel;
+                    responseModel = await client.PostAsyncHelper<CommonResponseModel>(requestUrl, requestModel) as CommonResponseModel;
                     break;
                 case "GET":
-                    responseModel = await client.GetAsyncHelper<Users>(requestUrl) as ResponseModel;
+                    responseModel = await client.GetAsyncHelper<Users>(requestUrl) as CommonResponseModel;
                     break;
             }
         }
@@ -48,20 +47,20 @@ namespace TestAutomationFramework.StepDefinitions
          [Then(@"I expect status code '(.*)'")]
         public void ThenIExpectStatusCode(int p0)
         {
-            Assert.AreEqual(responseModel.statusCode, p0);
+            Assert.AreEqual(responseModel.StatusCode, p0);
         }
         
         [Then(@"I verify list of users")]
         public void ThenIVerifyListOfUsers()
         {
-            Assert.IsNotNull(responseModel.value);
+            Assert.IsNotNull(responseModel.Value);
         }
 
 
         [Then(@"I should receive a token")]
         public void ThenIShouldReceiveAToken()
         {
-            //ScenarioContext.Current.Pending();
+            Assert.IsNotNull(responseModel.Token);
         }
 
     }
