@@ -4,21 +4,10 @@ using System.Text;
 
 namespace TestAutomationFramework.Models
 {
-    public class Data
+    public class RequestModel
     {
-        public int Id { get; set; }
-        public string First_Name { get; set; }
-        public string Last_Name { get; set; }
-        public string Avatar { get; set; }
-    }
-
-    public class Users
-    {
-        public int Page { get; set; }
-        public int Per_Page { get; set; }
-        public int Total { get; set; }
-        public int Total_Pages { get; set; }
-        public List<Data> Data { get; set; }
+        public string email { get; set; }
+        public string password { get; set; }
     }
     
 }

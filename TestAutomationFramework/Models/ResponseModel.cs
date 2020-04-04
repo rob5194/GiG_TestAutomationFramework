@@ -6,18 +6,10 @@ namespace TestAutomationFramework.Models
 {
     public class ResponseModel
     {
-        public int StatusCode { get; set; }
-        private object _value;
-        public object Value
-        {
-            get
-            {
-                return _value;
-            }
-            set
-            {
-                _value = value;
-            }
-        }
+        public int statusCode { get; set; }
+        public object value { get; set; }
+
+        public string token { get; set; }
+
     }
 }
