@@ -7,13 +7,13 @@ using TestAutomationFramework.Models;
 namespace TestAutomationFramework.StepDefinitions
 {
     [Binding]
-    public class API_TestsSteps
+    public class APITestsSteps
     {
 
         WebClient client = new WebClient();
         CommonResponseModel responseModel = null;
         RequestModel requestModel = null;
-        string requestType, requestUrl, jsonString = "";
+        string requestType, requestUrl = "";
 
 
         [Given(@"I have a '(.*)' API '(.*)'")]
@@ -62,6 +62,13 @@ namespace TestAutomationFramework.StepDefinitions
         {
             Assert.IsNotNull(responseModel.Token);
         }
+
+        [Then(@"I should receive an error")]
+        public void ThenIShouldReceiveAnError()
+        {
+            Assert.IsNotNull(responseModel.Error);
+        }
+
 
     }
 }

@@ -5,16 +5,25 @@
 	3. Get a list of Users with code 200
 
 
-@API_TESTS
+@API GET LIST OF USERS 
 Scenario: Get list of Users 
 Given I have a 'GET' API 'https://reqres.in/api/users'
 Then I execute the API
 Then I expect status code '200'
 Then I verify list of users
 
+@SUCCESSFUL REGISTRATION
 Scenario: : Successful registration
 Given I have a 'POST' API 'https://reqres.in/api/register' 
 Given I have a JSON input file '..\..\..\TestData\SuccessfulRegistration.json'
 Then I execute the API
 Then I should receive a token 
 Then I expect status code '200'
+
+@UNSUCCESSFUL REGISTRATION
+Scenario: : Unsuccessful registration
+Given I have a 'POST' API 'https://reqres.in/api/register' 
+Given I have a JSON input file '..\..\..\TestData\UnsuccessfulRegistration.json'
+Then I execute the API
+Then I should receive an error
+Then I expect status code '400'

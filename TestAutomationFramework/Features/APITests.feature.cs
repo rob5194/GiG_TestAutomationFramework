@@ -24,7 +24,7 @@ namespace TestAutomationFramework.Features
         
         private TechTalk.SpecFlow.ITestRunner testRunner;
         
-#line 1 "API_Tests.feature"
+#line 1 "APITests.feature"
 #line hidden
         
         [NUnit.Framework.OneTimeSetUpAttribute()]
@@ -73,11 +73,19 @@ namespace TestAutomationFramework.Features
         
         [NUnit.Framework.TestAttribute()]
         [NUnit.Framework.DescriptionAttribute("Get list of Users")]
-        [NUnit.Framework.CategoryAttribute("API_TESTS")]
+        [NUnit.Framework.CategoryAttribute("API")]
+        [NUnit.Framework.CategoryAttribute("GET")]
+        [NUnit.Framework.CategoryAttribute("LIST")]
+        [NUnit.Framework.CategoryAttribute("OF")]
+        [NUnit.Framework.CategoryAttribute("USERS")]
         public virtual void GetListOfUsers()
         {
             TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Get list of Users", null, new string[] {
-                        "API_TESTS"});
+                        "API",
+                        "GET",
+                        "LIST",
+                        "OF",
+                        "USERS"});
 #line 9
 this.ScenarioInitialize(scenarioInfo);
             this.ScenarioStart();
@@ -95,22 +103,52 @@ testRunner.Then("I verify list of users", ((string)(null)), ((TechTalk.SpecFlow.
         
         [NUnit.Framework.TestAttribute()]
         [NUnit.Framework.DescriptionAttribute(": Successful registration")]
+        [NUnit.Framework.CategoryAttribute("SUCCESSFUL")]
+        [NUnit.Framework.CategoryAttribute("REGISTRATION")]
         public virtual void SuccessfulRegistration()
         {
-            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo(": Successful registration", null, ((string[])(null)));
-#line 15
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo(": Successful registration", null, new string[] {
+                        "SUCCESSFUL",
+                        "REGISTRATION"});
+#line 16
 this.ScenarioInitialize(scenarioInfo);
             this.ScenarioStart();
-#line 16
-testRunner.Given("I have a \'POST\' API \'https://reqres.in/api/register\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
 #line 17
-testRunner.Given("I have a JSON input file \'..\\..\\..\\TestData\\SuccessfulRegistration.json\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
+testRunner.Given("I have a \'POST\' API \'https://reqres.in/api/register\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
 #line 18
-testRunner.Then("I execute the API", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+testRunner.Given("I have a JSON input file \'..\\..\\..\\TestData\\SuccessfulRegistration.json\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
 #line 19
-testRunner.Then("I should receive a token", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+testRunner.Then("I execute the API", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line 20
+testRunner.Then("I should receive a token", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line 21
 testRunner.Then("I expect status code \'200\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line hidden
+            this.ScenarioCleanup();
+        }
+        
+        [NUnit.Framework.TestAttribute()]
+        [NUnit.Framework.DescriptionAttribute(": Unsuccessful registration")]
+        [NUnit.Framework.CategoryAttribute("UNSUCCESSFUL")]
+        [NUnit.Framework.CategoryAttribute("REGISTRATION")]
+        public virtual void UnsuccessfulRegistration()
+        {
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo(": Unsuccessful registration", null, new string[] {
+                        "UNSUCCESSFUL",
+                        "REGISTRATION"});
+#line 24
+this.ScenarioInitialize(scenarioInfo);
+            this.ScenarioStart();
+#line 25
+testRunner.Given("I have a \'POST\' API \'https://reqres.in/api/register\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
+#line 26
+testRunner.Given("I have a JSON input file \'..\\..\\..\\TestData\\UnsuccessfulRegistration.json\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
+#line 27
+testRunner.Then("I execute the API", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line 28
+testRunner.Then("I should receive an error", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line 29
+testRunner.Then("I expect status code \'400\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
             this.ScenarioCleanup();
         }

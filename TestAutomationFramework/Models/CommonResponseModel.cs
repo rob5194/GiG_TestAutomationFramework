@@ -10,5 +10,6 @@ namespace TestAutomationFramework.Models
         public object Value { get; set; }
         public int Id { get; set; }
         public string Token { get; set; }
+        public string Error { get; set; }
     }
 }

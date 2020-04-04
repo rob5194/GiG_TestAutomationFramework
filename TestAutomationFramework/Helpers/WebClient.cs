@@ -71,7 +71,7 @@ namespace TestAutomationFramework.Helpers
                             var streamReader = new StreamReader(await response.Content.ReadAsStreamAsync());
                             var responseContent = streamReader.ReadToEnd().Trim();
                             JObject j = JsonConvert.DeserializeObject<JObject>(responseContent);
-                            var parsedata = new CommonResponseModel { Id = int.Parse(j["id"].ToString()), StatusCode = (int)response.StatusCode, Token = j["token"].ToString() };
+                            var parsedata = new CommonResponseModel { Error = j["error"].ToString(), StatusCode = (int)response.StatusCode};
                             return (T)Convert.ChangeType(parsedata, typeof(T));
                         }
                     }
