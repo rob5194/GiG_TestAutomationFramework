@@ -4,6 +4,9 @@ using System.Text;
 
 namespace TestAutomationFramework.Models
 {
+    /// <summary>
+    /// A car class used to create instances of different cars for Stream Processing Testing
+    /// </summary>
     public class Car
     {
         public string brandName { get; set; }

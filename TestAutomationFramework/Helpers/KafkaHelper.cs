@@ -11,25 +11,32 @@ using TestAutomationFramework.Models;
 
 namespace TestAutomationFramework.Helpers
 {
-
+    /// <summary>
+    /// A class for configuration and processing of Stream Processing
+    /// </summary>
     public class KafkaHelper
     {
-        jsonClass jsonData = null;
-        int counter = 0;
+        private jsonClass _jsonData = null;
+        private int _counter = 0;
         public KafkaHelper()
         {
-            jsonData = new jsonClass();
+            _jsonData = new jsonClass();
         }
 
+        /// <summary>
+        /// Create Configuration settings for producer or consumer according to parameters
+        /// </summary>
+        /// <param name="prodOrCons"></param>
+        /// <returns></returns>
         public Dictionary<string, object> CreateConfig(string prodOrCons)
         {
-
+            // read configuration data from a JSON file
             using (StreamReader r = new StreamReader("..\\..\\..\\config.json"))
             {
                 string json = r.ReadToEnd().Replace('.', '_');
-                jsonData = JsonConvert.DeserializeObject<jsonClass>(json);
+                _jsonData = JsonConvert.DeserializeObject<jsonClass>(json);
             }
-            Dictionary<string, object> config; //new Dictionary<string, object>();
+            Dictionary<string, object> config; 
 
             switch (prodOrCons.ToLower())
             {
@@ -37,7 +44,7 @@ namespace TestAutomationFramework.Helpers
                     // Create the producer configuration
                     config = new Dictionary<string, object>
                     {
-                                { "bootstrap.servers", jsonData.bootstrap_servers.Replace('_','.' )} ////127.0.0.1:9092 },
+                                { "bootstrap.servers", _jsonData.bootstrap_servers.Replace('_','.' )}
                     };
 
                     return config;
@@ -46,10 +53,10 @@ namespace TestAutomationFramework.Helpers
                     // Create the producer configuration
                     config = new Dictionary<string, object>
                     {
-                                { "group.id", jsonData.group_id },// "myconsumer" },//jsonData.group_id },
-                                { "bootstrap.servers", jsonData.bootstrap_servers.Replace('_','.' ) }, //"127.0.0.1:9092" },//jsonData.bootstrap_servers },
+                                { "group.id", _jsonData.group_id },
+                                { "bootstrap.servers", _jsonData.bootstrap_servers.Replace('_','.' ) }, 
                                 { "enable.auto.commit", true },
-                                { "auto.offset.reset", jsonData.auto_offset_reset }//"earliest" }// }jsonData.auto_offset_reset }
+                                { "auto.offset.reset", _jsonData.auto_offset_reset }
                     };
                     return config;
             }
@@ -58,54 +65,76 @@ namespace TestAutomationFramework.Helpers
 
         }
 
-        public List<string> CreateProducer(Dictionary<string, object> producerConfig, List<Car> cars)
+        /// <summary>
+        /// Create a producer based on the settings imported from config.json
+        /// </summary>
+        /// <param name="producerConfig"></param>
+        /// <param name="messages"></param>
+        /// <returns></returns>
+        public List<string> CreateProducer(Dictionary<string, object> producerConfig, List<string> messages)
         {
-
             List<string> producedMessages = new List<string>();
 
             // Create the producer
             using (var producer = new Producer<Null, string>(producerConfig, null, new StringSerializer(Encoding.UTF8)))
             {
-
-                foreach (Car c in cars)
+                try
                 {
-                    counter++;
-                    var message = $"Brand Name: {c.brandName} | Model: {c.model} | Doors: {c.numberOfDoors} | Sports: {c.sportsCar}";
-                    var result = producer.ProduceAsync(jsonData.topic, null, message).GetAwaiter().GetResult();
-                    producedMessages.Add($"{message.ToUpper()}");
-                }
-            }
+                    foreach (string msg in messages)
+                    {
+                        //counter created to check the amount of messages when consuming them
+                        _counter++;
 
-            return producedMessages;
+                        //Send a message to the topic 
+                        producer.ProduceAsync(_jsonData.topic, null, msg).GetAwaiter().GetResult();
+
+                        //add messages to the list of Produced messages
+                        producedMessages.Add($"{msg.ToUpper()}");
+                    }
+
+                    return producedMessages;
+                }
+
+                catch (Exception ex)
+                {
+                    return null;
+                }
+            }            
         }
 
+        /// <summary>
+        /// Create a consumer based on the settings imported from config.json
+        /// </summary>
+        /// <param name="consumerConfig"></param>
+        /// <returns></returns>
         public List<string> CreateConsumer(Dictionary<string, object> consumerConfig)
         {
-            List<string> producedMessages = new List<string>();
-            Stopwatch s = new Stopwatch();
-            s.Start();
+
+            List<string> consumedMessages = new List<string>();
+            //create the consumer
             using (var consumer = new Consumer<Null, string>(consumerConfig, null, new StringDeserializer(Encoding.UTF8)))
             {
                 try
                 {
                     // Subscribe to the Kafka topic
-                    consumer.Subscribe(new List<string>() { jsonData.topic });
+                    consumer.Subscribe(new List<string>() { _jsonData.topic });
+
                     // Subscribe to the OnMessage event
                     consumer.OnMessage += (obj, msg) =>
                     {
-                        producedMessages.Add(msg.Value.ToUpper());
+                        consumedMessages.Add(msg.Value.ToUpper());
 
                     };
 
                     // Poll for messages
-                    while (producedMessages.Count < counter)
+                    //Continue the poll until all produced messages are received
+                    while (consumedMessages.Count < _counter)
                     {
                         consumer.Poll(100);
-
                     }
 
-                    //consumer.Dispose();
-                    return producedMessages.Distinct().ToList();
+                    // make sure each message is not duplicate
+                    return consumedMessages.Distinct().ToList();
                 }
 
                 catch (Exception ex)
@@ -118,13 +147,6 @@ namespace TestAutomationFramework.Helpers
 
     }
 }
-
-//Stopwatch s = new Stopwatch();
-//s.Start();
-//                    while (s.Elapsed<TimeSpan.FromSeconds(10))
-//                    {
-//                        consumer.Poll();
-//                    }
 
 
 

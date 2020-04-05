@@ -4,6 +4,7 @@ using System.Text;
 
 namespace TestAutomationFramework.Models
 {
+    //A response model used to create an instance with response from APIs
     public class CommonResponseModel
     {
         public int StatusCode { get; set; }

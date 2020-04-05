@@ -15,24 +15,24 @@ namespace TestAutomationFramework.StepDefinitions
         KafkaHelper kh = new KafkaHelper();
         List<string> givenMessage = new List<string>();
         List<string> expectedMessage = new List<string>();
-        //public StreamProcessingSteps()
-        //{
-        //    cars.Add(new Car { brandName = "Volkswagen", model = "Beetle", numberOfDoors = 2, sportsCar = 'N' });
-        //}
+        public StreamProcessingSteps()
+        {
+            cars.Add(new Car("Wolksvagen", "Passat", 2, 'N'));
+            cars.Add(new Car("Ford", "Focus", 4, 'N'));
+            cars.Add(new Car("Fiat", "500", 2, 'Y'));
+        }
 
         [Given(@"I have produced some messages to a '(.*)'")]
         public void GivenIHaveProducedSomeMessagesToA(string p0)
         {
-
-            Car vw = new Car("Wolksvagen", "Passat", 2, 'N');
-            Car ford = new Car("Ford", "Focus", 4, 'N');
-            Car fiat = new Car("Fiat", "500", 2, 'Y');
-            cars.Add(vw);
-            cars.Add(ford);
-            cars.Add(fiat);
+            List<string> messages = new List<string>();
             p0 = "producer";
             Dictionary<string, object> prod = kh.CreateConfig(p0);
-            givenMessage = kh.CreateProducer(prod, cars);
+            foreach (Car c in cars)
+            {
+                messages.Add($"Brand Name: {c.brandName} | Model: {c.model} | Doors: {c.numberOfDoors} | Sports: {c.sportsCar}");
+            }
+            givenMessage = kh.CreateProducer(prod, messages);
         }
         
         [Then(@"I expect a list of messages from a '(.*)'")]

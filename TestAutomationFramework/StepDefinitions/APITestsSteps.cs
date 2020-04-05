@@ -26,7 +26,6 @@ namespace TestAutomationFramework.StepDefinitions
         [Given(@"I have a JSON input file '(.*)'")]
         public void GivenIHaveAJSONInputFile(string filePath)
         {
-            //requestModel = new RequestModel();
             requestModel = client.ReadJsonFile<RequestModel>(filePath);
 
         }

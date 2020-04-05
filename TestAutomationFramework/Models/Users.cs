@@ -4,6 +4,9 @@ using System.Text;
 
 namespace TestAutomationFramework.Models
 {
+    /// <summary>
+    /// A Data class to store data related to a particular Data of the user
+    /// </summary>
     public class Data
     {
         public int Id { get; set; }
@@ -12,6 +15,9 @@ namespace TestAutomationFramework.Models
         public string Avatar { get; set; }
     }
 
+    /// <summary>
+    /// A user class to store data on a User
+    /// </summary>
     public class Users
     {
         public int Page { get; set; }

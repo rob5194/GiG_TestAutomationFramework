@@ -4,6 +4,9 @@ using System.Text;
 
 namespace TestAutomationFramework.Models
 {
+    /// <summary>
+    /// A class used to read data from a JSON file for configuration settings of Kafka
+    /// </summary>
     public class jsonClass
     {
         public string group_id { get; set; }
